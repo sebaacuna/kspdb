@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Game, Craft
 from .lib.game import sync_game
-from .lib.craftdata import CraftData
+from .lib.craft import CraftParser
 
 
 @login_required
@@ -48,6 +48,8 @@ def choose_repo(request):
 @login_required
 def craft(request, pk):
     craft = Craft.objects.get(pk=pk)
+    parser = CraftParser.model_parser(craft)
     return render(request, 'craft.html', {
-        'data': CraftData(craft),
+        'obj': parser.parse(),
+        'parser': parser,
     })

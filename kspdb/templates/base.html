@@ -35,8 +35,8 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-          <img src="{{user_extra.avatar_url}}" class="exo-avatar">
-          <span class="mdl-layout-title">{{user.username}}</span>
+          <!-- <img src="{{user_extra.avatar_url}}" class="exo-avatar"> -->
+          <a  href="{% url 'index' %}" class="mdl-layout-title">{{user.username}}</a>
           <div class="mdl-layout-spacer"></div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
             <label class="mdl-button mdl-js-button mdl-button--icon" for="search">

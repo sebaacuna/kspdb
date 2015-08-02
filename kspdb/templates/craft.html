@@ -1,10 +1,41 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
-<pre>
-{{data.attributes}}
-</pre>
-<pre>
-{{data.parts}}
-</pre>
+<h2>{{obj.ship}}</h2>
+<div class="mdl-grid">
+    {% for name, value in obj.stats %}
+    <div class="mdl-cell mdl-cell--4-col">
+        <strong>{{name}}</strong> {{value}}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+    <div class="mdl-tabs__tab-bar">
+        {% for stage, parts in obj.stages %}
+            <a href="#stage-{{stage}}" class="mdl-tabs__tab">Stage {{stage}}</a>
+        {% endfor %}
+    </div>
+
+    {% for stage, parts in obj.stages %}
+        <div class="mdl-tabs__panel" id="stage-{{stage}}">
+            <p>{{parts|length}} parts</p>
+            <ul>
+                {% for p in parts %}
+                    <li>{{p.part}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+<h3>{% trans "Craft file" %}</h3>
+<div class="mdl-grid">
+    <pre class="mdl-cell--6-col">
+        {{parser.raw}}
+    </pre>
+    <pre class="mdl-cell--6-col">
+        {{parser.content}}
+    </pre>
+</div>
 {% endblock %}
