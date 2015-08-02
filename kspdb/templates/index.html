@@ -3,4 +3,16 @@
 
 {% block content %}
 <h2>{{game.repo}}</h2>
+<div class="mdl-grid">
+{% for craft in game.craft_set.all %}
+    <div class="mdl-cell--4-col">
+        <div class="mdl-card mdl-shadow--2dp">
+            <a  href="{% url 'craft' craft.pk %}"
+                class="mdl-card__title">
+                {{ craft.name }}
+            </a>
+        </div>
+    </div>
+{% endfor %}
+</div>
 {% endblock %}

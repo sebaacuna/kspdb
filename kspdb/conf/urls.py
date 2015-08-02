@@ -9,6 +9,7 @@ urlpatterns = patterns(
     url('^login/$', views.login, name="login"),
 
     url('^choose_repo$', views.choose_repo, name='choose_repo'),
+    url('^craft/(?P<pk>.+)$', views.craft, name='craft'),
 
     url('^', include('django.contrib.auth.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -1,7 +1,9 @@
+from github import GitHub
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from github import GitHub
-from .models import Game
+from .models import Game, Craft
+from .lib.game import sync_game
+from .lib.craftdata import CraftData
 
 
 @login_required
@@ -11,6 +13,7 @@ def index(request):
     else:
         game = request.user.game_set.first()
 
+    sync_game(game)
     social = request.user.social_auth.get(provider='github')
     return render(request, 'index.html', {
         'user_extra': social.extra_data,
@@ -25,9 +28,11 @@ def login(request):
 @login_required
 def choose_repo(request):
     repo = request.GET.get('repo')
-    if repo:
+    branch = request.GET.get('branch')
+    if repo and branch:
         game, created = Game.objects.get_or_create(user=request.user)
         game.repo = repo
+        game.branch = branch
         game.save()
         return redirect('index')
 
@@ -37,4 +42,12 @@ def choose_repo(request):
     return render(request, 'choose_repo.html', {
         'user_extra': social.extra_data,
         'repositories': gh.user().repos().get(),
+    })
+
+
+@login_required
+def craft(request, pk):
+    craft = Craft.objects.get(pk=pk)
+    return render(request, 'craft.html', {
+        'data': CraftData(craft),
     })
