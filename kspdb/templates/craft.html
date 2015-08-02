@@ -23,7 +23,7 @@
             <p>{{parts|length}} parts</p>
             <ul>
                 {% for p in parts %}
-                    <li>{{p.part}}</li>
+                    <li>{{p.model.pk}} : {{p.partName}}</li>
                 {% endfor %}
             </ul>
         </div>

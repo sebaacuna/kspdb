@@ -49,4 +49,5 @@ class PartCollection(Repo):
 class Part(RepoItem):
     collection = models.ForeignKey(PartCollection)
     name = NameField()
-    mesh = models.OneToOneField(Mesh)
+    partName = models.CharField(max_length=255, null=True)
+    mesh = models.OneToOneField(Mesh, null=True)

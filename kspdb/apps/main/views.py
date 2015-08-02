@@ -1,9 +1,10 @@
 from github import GitHub
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Game, Craft
+from .models import Game, Craft, PartCollection
 from .lib.game import sync_game
 from .lib.craft import CraftParser
+from .lib.part import sync_parts
 
 
 @login_required
@@ -14,6 +15,10 @@ def index(request):
         game = request.user.game_set.first()
 
     sync_game(game)
+    try:
+        sync_parts(request.user, PartCollection.objects.first())
+    except PartCollection.DoesNotExist:
+        pass
     social = request.user.social_auth.get(provider='github')
     return render(request, 'index.html', {
         'user_extra': social.extra_data,
