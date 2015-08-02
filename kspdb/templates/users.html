@@ -1,0 +1,35 @@
+{% extends "base.html" %}{%  load staticfiles %}{%  load i18n %}{% block content %}
+<div class="row">
+  <div class="col-xs-6"><a href="{% url 'user_new' %}" class="btn btn-default newItem js-modal">{% trans 'New user' %}</a>
+  </div>
+</div>{% if  messages %}
+<div class="row">
+  <div class="col-xs-6 col-xs-offset-3">{% for message in messages|__pyjade_iter:1 %}
+    <div class="alert alert-danger">{{message|force_escape}}</div>{% endfor %}
+  </div>
+</div>{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans 'First name' %}</th>
+      <th>{% trans 'Last name' %}</th>
+      <th>{% trans 'E-mail' %}</th>
+      <th>{% trans 'Status' %}</th>
+    </tr>
+  </thead>
+  <tbody>{% for u in users|__pyjade_iter:1 %}
+    <tr>
+      <td>{{u.first_name|default:""|force_escape}}</td>
+      <td>{{u.last_name|default:""|force_escape}}</td>
+      <td><a href="{% url 'user_edit' u.email %}" class="js-modal">{{u.email|force_escape}}</a>
+      </td>
+      <td>{% if  u.store %}
+        <div class="label label-info">Store owner</div>{% else %}{% if  u.is_active %}{% if  u.has_usable_password %}{% trans 'Active' %}{% else %}
+{% trans 'No password set' %}{% endif %}{% else %}
+{% trans 'Inactive' %}{% endif %}{% endif %}
+      </td>
+      <td>{% if  user.store and u != user %}<a href="{% url 'user_delete' u.email %}">{% trans 'Delete' %}</a>{% endif %}
+      </td>
+    </tr>{% endfor %}
+  </tbody>
+</table>{% endblock %}

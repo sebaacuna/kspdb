@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+  <main class="mdl-layout__content">
+    <h2>{% trans "Chooose a repository" %}</h2>
+    <div class="mdl-grid">
+    {% for repo in repositories %}
+      <div class="mdl-cell mdl-cell--4-col">
+        <a
+          class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+          href="?repo={{repo.name}}"
+        >
+        {{repo.full_name}}
+        </a>
+      </div>
+    {% endfor %}
+    </div>
+  </main>
+{% endblock %}

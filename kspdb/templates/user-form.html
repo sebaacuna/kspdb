@@ -1,0 +1,13 @@
+{%  load i18n %}{%  load bootstrap %}
+<form role="form" method="POST" action="{{action}}" class="js-modal">{% csrf_token %}
+
+  <div class="modal-header"><a data-dismiss="modal" aria-hidden="true" class="close">&times;</a>
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">{{form|bootstrap}}
+
+  </div>
+  <div class="modal-footer"><a data-dismiss="modal" class="btn btn-default">{% trans "Close" %}</a>
+    <button class="btn btn-primary">{% trans "Save" %}</button>
+  </div>
+</form>
