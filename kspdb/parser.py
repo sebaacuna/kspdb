@@ -27,7 +27,7 @@ class CraftObj(BaseObj):
         res = {}
         for p in self.parts:
             drymass += float(p.model.obj['mass'])
-            crewcapacity += int(p.model.obj.get('CrewCapacity',0))
+            crewcapacity += int(p.model.obj.get('CrewCapacity', 0))
             for rtype, amount in p.resources.items():
                 res[rtype] = res.get(rtype, 0) + amount
                 resmass += resources[rtype].density * amount

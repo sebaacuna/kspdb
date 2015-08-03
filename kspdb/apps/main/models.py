@@ -51,6 +51,7 @@ class RepoItem(models.Model):
 
     url = models.URLField(null=True)
     data = models.TextField(null=True)
+    path = models.TextField(null=True)
 
 
 class Game(Repo):
@@ -62,8 +63,9 @@ class Craft(RepoItem):
     name = NameField()
 
 
-class Mesh(RepoItem):
-    json = JSONField()
+class Mu(RepoItem):
+    bytedata = models.BinaryField()
+    geometry = JSONField()
 
 
 class PartCollection(Repo):
@@ -74,7 +76,7 @@ class Part(RepoItem):
     collection = models.ForeignKey(PartCollection)
     name = NameField()
     partName = models.CharField(max_length=255, null=True)
-    mesh = models.OneToOneField(Mesh, null=True)
+    mu = models.OneToOneField(Mu, null=True)
 
     @property
     def obj(self):

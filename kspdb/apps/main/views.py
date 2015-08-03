@@ -8,14 +8,15 @@ from kspdb.parser import CraftParser
 
 @login_required
 def index(request):
+    force = bool(request.GET.get('force', False))
     if request.user.game_set.count() == 0:
         return redirect('choose_repo')
     else:
         game = request.user.game_set.first()
 
-    sync_game(game)
+    sync_game(game, force)
     try:
-        sync_parts(request.user, PartCollection.objects.first())
+        sync_parts(request.user, PartCollection.objects.first(), force)
     except PartCollection.DoesNotExist:
         pass
     social = request.user.social_auth.get(provider='github')

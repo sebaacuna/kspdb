@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js" ></script>
+{% endblock %}
+
 {% block content %}
 <h2>{{obj.ship}}</h2>
 <div class="mdl-grid">
