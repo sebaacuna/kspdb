@@ -2,9 +2,8 @@ from github import GitHub
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Game, Craft, PartCollection
-from .lib.game import sync_game
-from .lib.craft import CraftParser
-from .lib.part import sync_parts
+from kspdb.sync import sync_game, sync_parts
+from kspdb.parser import CraftParser
 
 
 @login_required

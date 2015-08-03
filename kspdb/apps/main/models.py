@@ -78,7 +78,7 @@ class Part(RepoItem):
 
     @property
     def obj(self):
-        from .lib.craft import PartParser
+        from kspdb.parser import PartParser
         try:
             return self._obj
         except AttributeError:

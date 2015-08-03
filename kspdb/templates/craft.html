@@ -6,7 +6,7 @@
 <div class="mdl-grid">
     {% for name, value in obj.stats %}
     <div class="mdl-cell mdl-cell--4-col">
-        <strong>{{name}}</strong> {{value}}
+        <strong>{{name}}</strong> {{value|floatformat:2}}
     </div>
     {% endfor %}
 </div>
@@ -19,13 +19,19 @@
     </div>
 
     {% for stage, parts in obj.stages %}
+        {% regroup parts by model.obj.title as part_list %}
         <div class="mdl-tabs__panel" id="stage-{{stage}}">
-            <p>{{parts|length}} parts</p>
-            <ul>
-                {% for p in parts %}
-                    <li>{{p.model.pk}} : {{p.partName}}</li>
-                {% endfor %}
-            </ul>
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--3-col"></div>
+                <div class="mdl-cell mdl-cell--6-col mdl-grid">
+                    {% for p in part_list %}
+                    <div class="mdl-cell mdl-cell--6-col">
+                        {{p.list|length}} x {{p.grouper}}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mdl-cell mdl-cell--3-col"></div>
+            </div>
         </div>
     {% endfor %}
 </div>
