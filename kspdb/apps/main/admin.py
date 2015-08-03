@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Game, Craft, PartCollection, Part
+from .models import Game, Craft, PartCollection, Part, Resource
 
 
 class RepoAdmin(admin.ModelAdmin):
@@ -16,7 +16,12 @@ class PartAdmin(admin.ModelAdmin):
     search_fields = ('name', 'partName')
 
 
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
 admin.site.register(Game, RepoAdmin)
 admin.site.register(Craft, RepoItemAdmin)
 admin.site.register(PartCollection, RepoAdmin)
 admin.site.register(Part, PartAdmin)
+admin.site.register(Resource, ResourceAdmin)
