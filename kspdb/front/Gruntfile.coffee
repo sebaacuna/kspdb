@@ -77,15 +77,15 @@ module.exports = (grunt) ->
     uglify:
       options:
         mangle: false
-        compress: true
-        beautify: false
+        compress: false
+        beautify: true
 
       front:
         files: [{
           expand: true
           cwd: "#{buildDir}/front"
           src: [ "compiled.js", "all.js" ]
-          dest: "#{buildDir}"
+          dest: "#{buildDir}/front"
           ext: ".min.js"
         }]
 

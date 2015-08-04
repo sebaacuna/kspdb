@@ -15,30 +15,36 @@
     {% endfor %}
 </div>
 
-<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+<div class="mdl-tabs mdl-js-tabs">
     <div class="mdl-tabs__tab-bar">
         {% for stage, parts in obj.stages %}
-            <a href="#stage-{{stage}}" class="mdl-tabs__tab">Stage {{stage}}</a>
+            <a href="#stage-{{stage}}" class="mdl-tabs__tab {% if forloop.first %}is-active{% endif %}">Stage {{stage}}</a>
         {% endfor %}
     </div>
 
-    {% for stage, parts in obj.stages %}
-        {% regroup parts by model.obj.title as part_list %}
-        <div class="mdl-tabs__panel" id="stage-{{stage}}">
-            <div class="mdl-grid">
-                <div class="mdl-cell mdl-cell--3-col"></div>
-                <div class="mdl-cell mdl-cell--6-col mdl-grid">
-                    {% for p in part_list %}
-                    <div class="mdl-cell mdl-cell--6-col">
-                        {{p.list|length}} x {{p.grouper}}
-                    </div>
-                    {% endfor %}
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--6-col">
+        {% for stage, parts in obj.stages %}
+            {% regroup parts by model.obj.title as part_list %}
+            <div class="mdl-tabs__panel {% if forloop.first %}is-active{% endif %}  mdl-grid" id="stage-{{stage}}">
+                {% for p in part_list %}
+                <div class="mdl-cell mdl-cell--6-col">
+                    {{p.list|length}} x {{p.grouper}}
+                    {% if p.list.0.model.mu %}
+                        <a href="#" data-part="{{p.list.0.model.pk}}" class="js-action-partmesh"><i class="fa fa-eye"></i></a>
+                    {% endif %}
                 </div>
-                <div class="mdl-cell mdl-cell--3-col"></div>
+                {% endfor %}
             </div>
+        {% endfor %}
         </div>
-    {% endfor %}
+        <div class="mdl-cell mdl-cell--6-col js-meshview">
+    </div>
 </div>
+
+<pre class="js-meshdebug">
+</pre>
+
 <h3>{% trans "Craft file" %}</h3>
 <div class="mdl-grid">
     <pre class="mdl-cell--6-col">

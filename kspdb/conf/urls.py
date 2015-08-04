@@ -10,6 +10,7 @@ urlpatterns = patterns(
 
     url('^choose_repo$', views.choose_repo, name='choose_repo'),
     url('^craft/(?P<pk>.+)$', views.craft, name='craft'),
+    url('^part_mesh/(?P<pk>.+)$', views.part_mesh, name='part_mesh'),
 
     url('^', include('django.contrib.auth.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

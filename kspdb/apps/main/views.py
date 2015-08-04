@@ -1,9 +1,11 @@
 from github import GitHub
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from .models import Game, Craft, PartCollection
+from .models import Game, Craft, PartCollection, Part
 from kspdb.sync import sync_game, sync_parts
 from kspdb.parser import CraftParser
+from kspdb.mesh import mesh_from_mu
 
 
 @login_required
@@ -58,3 +60,10 @@ def craft(request, pk):
         'obj': parser.parse(),
         'parser': parser,
     })
+
+
+@login_required
+def part_mesh(request, pk):
+    part = Part.objects.get(pk=pk)
+    mesh = mesh_from_mu(part.mu.bytedata)
+    return JsonResponse(mesh)
