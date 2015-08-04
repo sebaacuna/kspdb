@@ -66,4 +66,4 @@ def craft(request, pk):
 def part_mesh(request, pk):
     part = Part.objects.get(pk=pk)
     mesh = mesh_from_mu(part.mu.bytedata)
-    return JsonResponse(mesh)
+    return JsonResponse(mesh, safe=False)

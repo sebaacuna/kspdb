@@ -1,10 +1,68 @@
+import io
 from struct import unpack
 
 
-def mesh_from_mu(mu):
+def mesh_from_mu(mu_data):
+    parser = Mu().read(mu_data)
+    mesh = mesh_from_muobj(parser, parser.obj)
+    return mesh
+
+
+def mesh_from_muobj(parser, obj):
+    return {
+        'geom': geom_from_muobj(parser, obj),
+        'children': [mesh_from_muobj(parser, child) for child in obj.children],
+    }
+
+
+def geom_from_muobj(parser, obj):
+    try:
+        mumesh = obj.shared_mesh
+    except AttributeError:
+        return
+
+    geom = {
+        'vertices': [],
+        'faces': [],
+    }
+
+    xyz = ('x', 'y', 'z')
+    abc = ('a', 'b', 'c')
+
+    for v in mumesh.verts:
+        geom['vertices'].append(dict(zip(xyz, v)))
+
+    for tri in mumesh.submeshes[0]:
+        face = dict(zip(abc, tri))
+        face['vertexNormals'] = [
+            dict(zip(xyz, mumesh.verts[i]))
+            for i in tri
+        ]
+        geom['faces'].append(face)
+
+    return geom
+
+
+def box():
     import json
     return json.loads(
-        '{"vertices":[{"x":0.4,"y":0.4,"z":0.4},{"x":0.4,"y":0.4,"z":-0.4},{"x":0.4,"y":-0.4,"z":0.4},{"x":0.4,"y":-0.4,"z":-0.4},{"x":-0.4,"y":0.4,"z":-0.4},{"x":-0.4,"y":0.4,"z":0.4},{"x":-0.4,"y":-0.4,"z":-0.4},{"x":-0.4,"y":-0.4,"z":0.4}],"faces":[{"a":0,"b":2,"c":1,"normal":{"x":1,"y":0,"z":0},"vertexNormals":[{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":0},{"a":2,"b":3,"c":1,"normal":{"x":1,"y":0,"z":0},"vertexNormals":[{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":0},{"a":4,"b":6,"c":5,"normal":{"x":-1,"y":0,"z":0},"vertexNormals":[{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":1},{"a":6,"b":7,"c":5,"normal":{"x":-1,"y":0,"z":0},"vertexNormals":[{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":1},{"a":4,"b":5,"c":1,"normal":{"x":0,"y":1,"z":0},"vertexNormals":[{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":2},{"a":5,"b":0,"c":1,"normal":{"x":0,"y":1,"z":0},"vertexNormals":[{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":2},{"a":7,"b":6,"c":2,"normal":{"x":0,"y":-1,"z":0},"vertexNormals":[{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":3},{"a":6,"b":3,"c":2,"normal":{"x":0,"y":-1,"z":0},"vertexNormals":[{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":3},{"a":5,"b":7,"c":0,"normal":{"x":0,"y":0,"z":1},"vertexNormals":[{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":4},{"a":7,"b":2,"c":0,"normal":{"x":0,"y":0,"z":1},"vertexNormals":[{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":4},{"a":1,"b":3,"c":4,"normal":{"x":0,"y":0,"z":-1},"vertexNormals":[{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":5},{"a":3,"b":6,"c":4,"normal":{"x":0,"y":0,"z":-1},"vertexNormals":[{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":5}],"faceVertexUvs":[[[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}]]]}'   # noqa
+        '''{
+            "vertices":[{"x":0.4,"y":0.4,"z":0.4},{"x":0.4,"y":0.4,"z":-0.4},{"x":0.4,"y":-0.4,"z":0.4},{"x":0.4,"y":-0.4,"z":-0.4},{"x":-0.4,"y":0.4,"z":-0.4},{"x":-0.4,"y":0.4,"z":0.4},{"x":-0.4,"y":-0.4,"z":-0.4},{"x":-0.4,"y":-0.4,"z":0.4}],
+            "faces":[
+                {"a":0,"b":2,"c":1,"normal":{"x":1,"y":0,"z":0},"vertexNormals":[{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":0},
+                {"a":2,"b":3,"c":1,"normal":{"x":1,"y":0,"z":0},"vertexNormals":[{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0},{"x":1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":0},
+                {"a":4,"b":6,"c":5,"normal":{"x":-1,"y":0,"z":0},"vertexNormals":[{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":1},
+                {"a":6,"b":7,"c":5,"normal":{"x":-1,"y":0,"z":0},"vertexNormals":[{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0},{"x":-1,"y":0,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":1},
+                {"a":4,"b":5,"c":1,"normal":{"x":0,"y":1,"z":0},"vertexNormals":[{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":2},
+                {"a":5,"b":0,"c":1,"normal":{"x":0,"y":1,"z":0},"vertexNormals":[{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0},{"x":0,"y":1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":2},
+                {"a":7,"b":6,"c":2,"normal":{"x":0,"y":-1,"z":0},"vertexNormals":[{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":3},
+                {"a":6,"b":3,"c":2,"normal":{"x":0,"y":-1,"z":0},"vertexNormals":[{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0},{"x":0,"y":-1,"z":0}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":3},
+                {"a":5,"b":7,"c":0,"normal":{"x":0,"y":0,"z":1},"vertexNormals":[{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":4},
+                {"a":7,"b":2,"c":0,"normal":{"x":0,"y":0,"z":1},"vertexNormals":[{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1},{"x":0,"y":0,"z":1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":4},
+                {"a":1,"b":3,"c":4,"normal":{"x":0,"y":0,"z":-1},"vertexNormals":[{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":5},
+                {"a":3,"b":6,"c":4,"normal":{"x":0,"y":0,"z":-1},"vertexNormals":[{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1},{"x":0,"y":0,"z":-1}],"color":{},"vertexColors":[],"vertexTangents":[],"materialIndex":5}],
+            "faceVertexUvs":[[[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],[{"x":0,"y":1},{"x":0,"y":0},{"x":1,"y":1}],[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}]]]
+            }'''   # noqa
     )
 
 
@@ -688,10 +746,10 @@ class Mu:
         self.name = name
         pass
 
-    def read(self, filepath):
+    def read(self, data):
         self.materials = []
         self.textures = []
-        self.file = open(filepath, "rb")
+        self.file = io.BytesIO(data)
         self.magic, self.version = self.read_int(2)
         if (self.magic != MuEnum.MODEL_BINARY or self.version < 0
            or self.version > MuEnum.FILE_VERSION):
